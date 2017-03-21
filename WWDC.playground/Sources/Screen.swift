@@ -9,11 +9,12 @@ open class Screen: UIView {
     
     let reuseId = "AppCell"
     
-    public init(multiplier: CGFloat = 1) {
+    public init(multiplier: CGFloat = 5) {
         super.init(frame: CGRect(x: multiplier * 4.31, y: multiplier * 17.12, width: multiplier * 58.5, height: multiplier*104.05))
         
         self.multiplier = multiplier
         
+        // Add background photo
         imgView.frame = CGRect(x: 0, y: 10, width: frame.width, height: frame.height)
         let bgImg = UIImage(named: "bg3.png")
         imgView.image = bgImg
@@ -22,6 +23,7 @@ open class Screen: UIView {
         let dock = Dock(multiplier: multiplier)
         addSubview(dock)
         
+        // Setup app display as collection view
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 40, left: 10, bottom: 100, right: 10)
         layout.itemSize = CGSize(width: multiplier * 12, height: multiplier * 12)
@@ -35,6 +37,7 @@ open class Screen: UIView {
         
         addSubview(appCollection)
         
+        // Get time to setup status bar info
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .none
