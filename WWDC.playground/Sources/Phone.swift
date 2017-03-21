@@ -31,6 +31,11 @@ open class Phone: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func updateColor(color: UIColor) {
+        backgroundColor = color
+        homeButton.backgroundColor = color
+    }
+    
     func homeButtonPressed() {
         print("Success!")
     }
