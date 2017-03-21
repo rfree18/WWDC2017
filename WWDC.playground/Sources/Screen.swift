@@ -14,7 +14,7 @@ open class Screen: UIView {
         
         self.multiplier = multiplier
         
-        imgView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        imgView.frame = CGRect(x: 0, y: 10, width: frame.width, height: frame.height)
         let bgImg = UIImage(named: "bg3.png")
         imgView.image = bgImg
         addSubview(imgView)
@@ -23,16 +23,29 @@ open class Screen: UIView {
         addSubview(dock)
         
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 40, left: 10, bottom: 100, right: 10)
         layout.itemSize = CGSize(width: multiplier * 12, height: multiplier * 12)
         appCollection = UICollectionView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height), collectionViewLayout: layout)
         appCollection.register(AppCell.self, forCellWithReuseIdentifier: reuseId)
         appCollection.backgroundColor = UIColor.clear
+        appCollection.isScrollEnabled = false
         
         appCollection.dataSource = self
         appCollection.delegate = self
         
         addSubview(appCollection)
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .none
+        let timeString = dateFormatter.string(from: Date())
+        
+        let carrierTextView = UITextView(frame: CGRect(x: 0, y: 5, width: 100, height: 50))
+        carrierTextView.font = UIFont.systemFont(ofSize: 10)
+        carrierTextView.backgroundColor = UIColor.clear
+        carrierTextView.text = "Verizon \(timeString)"
+        carrierTextView.textColor = UIColor.white
+        addSubview(carrierTextView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -48,9 +61,10 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
         return cell
     }
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        return 2
     }
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 16
+        return section == 1 ? 4 : 16
+
     }
 }
