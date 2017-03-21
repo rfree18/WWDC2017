@@ -14,7 +14,7 @@ open class Screen: UIView {
         
         self.multiplier = multiplier
         
-        // Add background photo
+        // Add background phot
         imgView.frame = CGRect(x: 0, y: 10, width: frame.width, height: frame.height)
         let bgImg = UIImage(named: "bg3.png")
         imgView.image = bgImg
@@ -43,23 +43,33 @@ open class Screen: UIView {
         dateFormatter.dateStyle = .none
         let timeString = dateFormatter.string(from: Date())
         
-        let carrierTextView = UITextView(frame: CGRect(x: 0, y: 5, width: 100, height: 50))
+        let carrierTextView = UITextView(frame: CGRect(x: 0, y: 5, width: bounds.width, height: 50))
         carrierTextView.font = UIFont.systemFont(ofSize: 10)
         carrierTextView.backgroundColor = UIColor.clear
-        carrierTextView.text = "Verizon \(timeString)"
+        carrierTextView.text = "Verizon \t\t\t  \(timeString)"
         carrierTextView.textColor = UIColor.white
+        carrierTextView.isEditable = false
         addSubview(carrierTextView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func openApp(index: Int) {
+        switch index {
+        case 0:
+            // Do something
+            break
+        default:
+            return
+        }
+    }
 }
 
 extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! AppCell
-//        cell.frame = CGRect(x: 0, y: 0, width: multiplier * 15, height: multiplier * 15)
         cell.backgroundColor = UIColor.red
         return cell
     }
@@ -69,5 +79,9 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return section == 1 ? 4 : 16
 
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // TODO: Open app
     }
 }
