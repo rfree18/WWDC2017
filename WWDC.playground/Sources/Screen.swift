@@ -104,7 +104,7 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        appView = MapView(frame: bounds)
+        appView = WebView(frame: bounds)
         if let appView = appView {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
                 self.addSubview(appView)
