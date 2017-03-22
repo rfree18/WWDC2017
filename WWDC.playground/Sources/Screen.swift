@@ -9,13 +9,15 @@ open class Screen: UIView {
     
     let reuseId = "AppCell"
     
+    var appView: UIView?
+    
     public init(multiplier: CGFloat = 5) {
         super.init(frame: CGRect(x: multiplier * 4.31, y: multiplier * 17.12, width: multiplier * 58.5, height: multiplier*104.05))
         
         self.multiplier = multiplier
         
         // Add background phot
-        imgView.frame = CGRect(x: 0, y: 10, width: frame.width, height: frame.height)
+        imgView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         let bgImg = UIImage(named: "bg3.png")
         imgView.image = bgImg
         addSubview(imgView)
@@ -25,7 +27,7 @@ open class Screen: UIView {
         
         // Setup app display as collection view
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 40, left: 10, bottom: 100, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 30, left: 10, bottom: 120, right: 10)
         layout.itemSize = CGSize(width: multiplier * 12, height: multiplier * 12)
         appCollection = UICollectionView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height), collectionViewLayout: layout)
         appCollection.register(AppCell.self, forCellWithReuseIdentifier: reuseId)
@@ -43,12 +45,12 @@ open class Screen: UIView {
         dateFormatter.dateStyle = .none
         let timeString = dateFormatter.string(from: Date())
         
-        let carrierTextView = UITextView(frame: CGRect(x: 0, y: 5, width: bounds.width, height: 50))
+        let carrierTextView = UITextView(frame: CGRect(x: 0, y: -5, width: bounds.width, height: 50))
         carrierTextView.font = UIFont.systemFont(ofSize: 10)
         carrierTextView.backgroundColor = UIColor.clear
         carrierTextView.text = "Verizon \t\t\t  \(timeString)"
         carrierTextView.textColor = UIColor.white
-        carrierTextView.isEditable = false
+        carrierTextView.isUserInteractionEnabled = false
         addSubview(carrierTextView)
     }
     
@@ -65,12 +67,32 @@ open class Screen: UIView {
             return
         }
     }
+    
+    func closeApp() {
+        if appView != nil {
+            UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromBottom, animations: {
+                self.appView?.removeFromSuperview()
+            }, completion: { (status) in
+                self.appView = nil
+            })
+        }
+    }
 }
 
 extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! AppCell
-        cell.backgroundColor = UIColor.red
+        cell.backgroundColor = UIColor.white
+        if(indexPath.section == 1) {
+            switch indexPath.row {
+            case 0:
+                cell.textField.text = "R"
+            case 1:
+                cell.textField.text = "O"
+            default:
+                cell.textField.text = "S"
+            }
+        }
         return cell
     }
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -82,6 +104,11 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO: Open app
+        appView = MapView(frame: bounds)
+        if let appView = appView {
+            UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
+                self.addSubview(appView)
+            }, completion: nil)
+        }
     }
 }

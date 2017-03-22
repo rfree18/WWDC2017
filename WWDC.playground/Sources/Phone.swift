@@ -3,6 +3,7 @@ import UIKit
 
 open class Phone: UIView {
     var homeButton = UIButton(frame: CGRect(x: 28.11, y: 129.1, width: 10.90, height: 10.90))
+    var screen: Screen!
     
     public init(multiplier: CGFloat = 5) {
         super.init(frame: CGRect(x: 0, y: 0, width: multiplier * 67.1, height: multiplier * 138.3))
@@ -20,7 +21,8 @@ open class Phone: UIView {
         homeButton.addTarget(self, action: #selector(homeButtonPressed), for: .touchUpInside)
         addSubview(homeButton)
         
-        addSubview(Screen(multiplier: multiplier))
+        screen = Screen(multiplier: multiplier)
+        addSubview(screen)
         
         // Speaker grille at top of phone
         let receiver = UIView(frame: CGRect(x: multiplier * 27.62, y: multiplier * 9.08, width: multiplier * 11.87, height: multiplier * 1.20))
@@ -39,7 +41,6 @@ open class Phone: UIView {
     }
     
     func homeButtonPressed() {
-        // TODO: Implement home button functionality
-        print("Success!")
+        screen.closeApp()
     }
 }
