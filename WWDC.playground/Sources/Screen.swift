@@ -104,11 +104,30 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        appView = WebView(frame: bounds)
+        appView = SettingsView(frame: bounds)
+        if let appView = appView as? SettingsView {
+            appView.delegate = self
+        }
         if let appView = appView {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
                 self.addSubview(appView)
             }, completion: nil)
         }
+    }
+}
+
+extension Screen: SettingsViewDelegate {
+    public func changeColor(color: UIColor) {
+        if let phone = superview as? Phone {
+            phone.updateColor(color: color)
+        }
+    }
+    
+    public func getCurrentColor() -> UIColor? {
+        if let phone = superview as? Phone {
+            return phone.backgroundColor
+        }
+        
+        return nil
     }
 }

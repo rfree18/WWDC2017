@@ -9,6 +9,8 @@ open class Phone: UIView {
         super.init(frame: CGRect(x: 0, y: 0, width: multiplier * 67.1, height: multiplier * 138.3))
         backgroundColor = UIColor.black
         layer.cornerRadius = CGFloat(8 * multiplier)
+        layer.borderColor = UIColor.black.cgColor
+        layer.borderWidth = 0.5
         clipsToBounds = true
         
         // Setup home button
@@ -21,6 +23,10 @@ open class Phone: UIView {
         homeButton.addTarget(self, action: #selector(homeButtonPressed), for: .touchUpInside)
         addSubview(homeButton)
         
+        let screenBackground = UIView(frame: CGRect(x: multiplier * 4.31, y: multiplier * 17.12, width: multiplier * 58.5, height: multiplier*104.05))
+        screenBackground.backgroundColor = UIColor.black
+        addSubview(screenBackground)
+        
         screen = Screen(multiplier: multiplier)
         addSubview(screen)
         
@@ -29,6 +35,7 @@ open class Phone: UIView {
         receiver.backgroundColor = UIColor.gray
         receiver.layer.cornerRadius = 5
         addSubview(receiver)
+        
     }
     
     required public init?(coder aDecoder: NSCoder) {

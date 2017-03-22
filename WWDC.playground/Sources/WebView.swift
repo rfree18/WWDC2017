@@ -11,7 +11,8 @@ open class WebView: UIView {
         URLCache.shared = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
         
         webView = UIWebView(frame: frame)
-        let url = URL(string: "http://www.apple.com")!
+        webView.scalesPageToFit = true
+        let url = URL(string: "http://www.nyu.edu")!
         let request = URLRequest(url: url)
         webView.loadRequest(request)
         
