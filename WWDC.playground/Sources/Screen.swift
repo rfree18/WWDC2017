@@ -8,6 +8,8 @@ open class Screen: UIView {
     var multiplier: CGFloat!
     
     let reuseId = "AppCell"
+    let hexArray = [0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xffde00, 0xfcff00, 0xd2ff00, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xbf0199, 0xffffff]
+    var currColorId = 0
     
     var appView: UIView?
     
@@ -27,6 +29,8 @@ open class Screen: UIView {
         
         // Setup app display as collection view
         let layout = UICollectionViewFlowLayout()
+        // Insets needed to place apps correct margin away from edges and from the dock
+        // NOTE: These values assume multiplier = 5
         layout.sectionInset = UIEdgeInsets(top: 30, left: 10, bottom: 120, right: 10)
         layout.itemSize = CGSize(width: multiplier * 12, height: multiplier * 12)
         appCollection = UICollectionView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height), collectionViewLayout: layout)
@@ -58,6 +62,7 @@ open class Screen: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // TODO: Evaluate if this is needed
     func openApp(index: Int) {
         switch index {
         case 0:
@@ -82,7 +87,9 @@ open class Screen: UIView {
 extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! AppCell
-        cell.backgroundColor = UIColor.white
+        cell.backgroundColor = UIColor.green
+        
+        // Adjust dock apps only
         if(indexPath.section == 1) {
             switch indexPath.row {
             case 0:
@@ -96,9 +103,11 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
         return cell
     }
     public func numberOfSections(in collectionView: UICollectionView) -> Int {
+        // First section is main app screen, second is dock
         return 2
     }
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // Only want 4 apps in the dock
         return section == 1 ? 4 : 16
 
     }
@@ -117,17 +126,16 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
 }
 
 extension Screen: SettingsViewDelegate {
-    public func changeColor(color: UIColor) {
+    public func changeColor(colorId: Int) {
         if let phone = superview as? Phone {
+            let color = UIColor(netHex: hexArray[colorId])
             phone.updateColor(color: color)
+            // Need to store new ID so slider can adjust when reloaded
+            currColorId = colorId
         }
     }
     
-    public func getCurrentColor() -> UIColor? {
-        if let phone = superview as? Phone {
-            return phone.backgroundColor
-        }
-        
-        return nil
+    public func getCurrentColorId() -> Int {
+        return currColorId
     }
 }
