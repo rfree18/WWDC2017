@@ -1,4 +1,5 @@
 import Foundation
+import AVFoundation
 import UIKit
 
 open class Screen: UIView {
@@ -6,6 +7,7 @@ open class Screen: UIView {
     let imgView = UIImageView()
     var appCollection: UICollectionView!
     var multiplier: CGFloat!
+    var player: AVQueuePlayer!
     
     let reuseId = "AppCell"
     let hexArray = [0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xffde00, 0xfcff00, 0xd2ff00, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xbf0199, 0xffffff]
@@ -13,14 +15,15 @@ open class Screen: UIView {
     
     var appView: UIView?
     
-    public init(multiplier: CGFloat = 5) {
+    public init(multiplier: CGFloat = 5, player: AVQueuePlayer) {
         super.init(frame: CGRect(x: multiplier * 4.31, y: multiplier * 17.12, width: multiplier * 58.5, height: multiplier*104.05))
         
         self.multiplier = multiplier
+        self.player = player
         
         // Add background phot
         imgView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-        let bgImg = UIImage(named: "bg3.png")
+        let bgImg = UIImage(named: "wwbg.png")
         imgView.image = bgImg
         addSubview(imgView)
         
@@ -113,7 +116,20 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        appView = SettingsView(frame: bounds)
+        if(indexPath.section == 0) {
+            switch indexPath.row {
+            case 0:
+                appView = MapView(frame: bounds)
+            case 1:
+                appView = WebView(frame: bounds)
+            case 2:
+                appView = SettingsView(frame: bounds)
+            case 3:
+                appView = MusicPlayer(frame: bounds, player: player)
+            default:
+                break
+            }
+        }
         if let appView = appView as? SettingsView {
             appView.delegate = self
         }

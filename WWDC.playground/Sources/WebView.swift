@@ -12,7 +12,7 @@ open class WebView: UIView {
         
         webView = UIWebView(frame: frame)
         webView.scalesPageToFit = true
-        let url = URL(string: "http://www.nyu.edu")!
+        let url = URL(string: "http://www.apple.com")!
         let request = URLRequest(url: url)
         webView.loadRequest(request)
         
