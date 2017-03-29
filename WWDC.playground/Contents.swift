@@ -1,4 +1,8 @@
-//: Playground - noun: a place where people can play
+// Virtual iPhone (with some twists!)
+// Author: Ross Freeman
+//
+// NOTES:
+// 1. Views are used instead of ViewControllers due to various issues with resizing (namely getting the controller to stay within the bounds of the phone screen) as well as issues with implementing the custom transition
 
 import UIKit
 import AVFoundation

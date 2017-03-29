@@ -133,6 +133,14 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
         if let appView = appView as? SettingsView {
             appView.delegate = self
         }
+        
+        if let appView = appView as? MusicPlayer {
+            let searchController = UISearchController(searchResultsController: nil)
+            searchController.searchResultsUpdater = appView
+            searchController.dimsBackgroundDuringPresentation = false
+            appView.songTable.tableHeaderView = searchController.searchBar
+        }
+        
         if let appView = appView {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
                 self.addSubview(appView)

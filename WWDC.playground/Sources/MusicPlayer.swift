@@ -17,10 +17,10 @@ open class MusicPlayer: UIView {
         super.init(frame: frame)
         self.player = player
         
-        searchController.searchResultsUpdater = self
-        searchController.dimsBackgroundDuringPresentation = false
-        songTable.tableHeaderView = searchController.searchBar
-        searchController.searchBar.becomeFirstResponder()
+//        searchController.searchResultsUpdater = self
+//        searchController.dimsBackgroundDuringPresentation = false
+//        songTable.tableHeaderView = searchController.searchBar
+//        searchController.searchBar.becomeFirstResponder()
         
         songTable.register(UITableViewCell.self, forCellReuseIdentifier: reuseId)
         songTable.delegate = self
@@ -171,8 +171,8 @@ extension MusicPlayer: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension MusicPlayer: UISearchResultsUpdating {
-    @available(iOS 8.0, *)
     public func updateSearchResults(for searchController: UISearchController) {
+        print("Success!")
         if let input = searchController.searchBar.text {
             getNewResults(artist: input)
         }
