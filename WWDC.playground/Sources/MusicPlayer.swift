@@ -16,9 +16,12 @@ open class MusicPlayer: UIView {
     public init(frame: CGRect, player: AVQueuePlayer) {
         super.init(frame: frame)
         self.player = player
-//        searchController.searchResultsUpdater = self
-//        searchController.dimsBackgroundDuringPresentation = false
-//        songTable.tableHeaderView = searchController.searchBar
+        
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        songTable.tableHeaderView = searchController.searchBar
+        searchController.searchBar.becomeFirstResponder()
+        
         songTable.register(UITableViewCell.self, forCellReuseIdentifier: reuseId)
         songTable.delegate = self
         songTable.dataSource = self
@@ -167,8 +170,11 @@ extension MusicPlayer: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-//extension MusicPlayer: UISearchResultsUpdating {
-//    func updateSearchResultsForSearchController(searchController: UISearchController) {
-//        filterContentForSearchText(searchController.searchBar.text!)
-//    }
-//}
+extension MusicPlayer: UISearchResultsUpdating {
+    @available(iOS 8.0, *)
+    public func updateSearchResults(for searchController: UISearchController) {
+        if let input = searchController.searchBar.text {
+            getNewResults(artist: input)
+        }
+    }
+}
