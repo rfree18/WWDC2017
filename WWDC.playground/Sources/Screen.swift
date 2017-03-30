@@ -116,20 +116,7 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if(indexPath.section == 0) {
-            switch indexPath.row {
-            case 0:
-                appView = MapView(frame: bounds)
-            case 1:
-                appView = WebView(frame: bounds)
-            case 2:
-                appView = SettingsView(frame: bounds)
-            case 3:
-                appView = MusicPlayer(frame: bounds, player: player)
-            default:
-                break
-            }
-        }
+        appView = ResumeView(frame: bounds)
         if let appView = appView as? SettingsView {
             appView.delegate = self
         }
