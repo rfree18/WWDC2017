@@ -12,4 +12,14 @@ extension UIView {
         animation.duration = duration
         layer.add(animation, forKey: kCATransitionPush)
     }
+    
+    func fadeTransition(_ duration: CFTimeInterval) {
+        let animation:CATransition = CATransition()
+        animation.timingFunction = CAMediaTimingFunction(name:
+            kCAMediaTimingFunctionEaseInEaseOut)
+        animation.type = kCATransitionPush
+        animation.subtype = kCATransitionFromLeft
+        animation.duration = duration
+        layer.add(animation, forKey: kCATransitionFade)
+    }
 }

@@ -65,17 +65,6 @@ open class Screen: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // TODO: Evaluate if this is needed
-    func openApp(index: Int) {
-        switch index {
-        case 0:
-            // Do something
-            break
-        default:
-            return
-        }
-    }
-    
     func closeApp() {
         if appView != nil {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromBottom, animations: {
@@ -102,6 +91,9 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
             default:
                 cell.textField.text = "S"
             }
+        } else if(indexPath.section == 0) {
+            let color = UIColor(netHex: hexArray[indexPath.row])
+            cell.backgroundColor = color
         }
         return cell
     }
@@ -111,22 +103,29 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // Only want 4 apps in the dock
-        return section == 1 ? 4 : 16
+        return section == 0 ? hexArray.count : 4
 
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        appView = ResumeView(frame: bounds)
-        if let appView = appView as? SettingsView {
-            appView.delegate = self
+        if(indexPath.section == 0) {
+            changeColor(colorId: indexPath.row)
+        } else if(indexPath.section == 1) {
+            appView = ResumeView(frame: bounds)
         }
         
-        if let appView = appView as? MusicPlayer {
-            let searchController = UISearchController(searchResultsController: nil)
-            searchController.searchResultsUpdater = appView
-            searchController.dimsBackgroundDuringPresentation = false
-            appView.songTable.tableHeaderView = searchController.searchBar
-        }
+        
+//        appView = ResumeView(frame: bounds)
+//        if let appView = appView as? SettingsView {
+//            appView.delegate = self
+//        }
+//        
+//        if let appView = appView as? MusicPlayer {
+//            let searchController = UISearchController(searchResultsController: nil)
+//            searchController.searchResultsUpdater = appView
+//            searchController.dimsBackgroundDuringPresentation = false
+//            appView.songTable.tableHeaderView = searchController.searchBar
+//        }
         
         if let appView = appView {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
