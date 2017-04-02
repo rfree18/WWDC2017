@@ -10,7 +10,7 @@ open class Screen: UIView {
     var player: AVQueuePlayer!
     
     let reuseId = "AppCell"
-    let hexArray = [0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xffde00, 0xfcff00, 0xd2ff00, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xbf0199, 0xffffff]
+    let hexArray = [0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xfcff00, 0xd2ff00, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xffffff]
     var currColorId = 0
     
     var appView: UIView?
@@ -34,7 +34,7 @@ open class Screen: UIView {
         let layout = UICollectionViewFlowLayout()
         // Insets needed to place apps correct margin away from edges and from the dock
         // NOTE: These values assume multiplier = 5
-        layout.sectionInset = UIEdgeInsets(top: 30, left: 10, bottom: 120, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 30, left: 10, bottom: 190, right: 10)
         layout.itemSize = CGSize(width: multiplier * 12, height: multiplier * 12)
         appCollection = UICollectionView(frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height), collectionViewLayout: layout)
         appCollection.register(AppCell.self, forCellWithReuseIdentifier: reuseId)
@@ -59,6 +59,8 @@ open class Screen: UIView {
         carrierTextView.textColor = UIColor.white
         carrierTextView.isUserInteractionEnabled = false
         addSubview(carrierTextView)
+        
+        initStartupSequence()
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -73,6 +75,41 @@ open class Screen: UIView {
                 self.appView = nil
             })
         }
+    }
+    
+    func initStartupSequence() {
+        let width: CGFloat = 0.6 * 400/3
+        let height: CGFloat = 0.6 * 100
+        
+        layer.mask = CALayer()
+        layer.mask?.contents = UIImage(named: "apl.png")?.cgImage
+        layer.mask?.bounds = CGRect(x: 0, y: 0, width: width, height: height)
+        layer.mask?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        layer.mask?.position = CGPoint(x: frame.size.width/2, y: frame.size.height/2)
+        
+        _ = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(startupAnimation), userInfo: nil, repeats: false)
+    }
+    
+    func startupAnimation() {
+        let width: CGFloat = 0.6 * 400/3
+        let height: CGFloat = 0.6 * 100
+        
+        let keyFrameAnimation = CAKeyframeAnimation(keyPath: "bounds")
+        keyFrameAnimation.delegate = self
+        keyFrameAnimation.duration = 2
+        keyFrameAnimation.beginTime = CACurrentMediaTime() + 1
+        let initalBounds = NSValue(cgRect: (layer.mask?.bounds)!)
+        let secondBounds = NSValue(cgRect: CGRect(x: 0, y: 0, width: 0.9 * width, height: 0.9 * height))
+        let finalBounds = NSValue(cgRect: CGRect(x: 0, y: 0, width: 30 * width, height: 30 * height))
+        keyFrameAnimation.values = [initalBounds, secondBounds, finalBounds]
+        keyFrameAnimation.keyTimes = [0, 0.3, 1]
+        keyFrameAnimation.timingFunctions = [CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut), CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)]
+        layer.mask?.add(keyFrameAnimation, forKey: "bounds")
+        
+        let itemLocation = Bundle.main.url(forResource: "MacStartUp", withExtension: "mp3")!
+        let item = AVPlayerItem(url: itemLocation)
+        player.insert(item, after: nil)
+        player.play()
     }
 }
 
@@ -147,5 +184,11 @@ extension Screen: SettingsViewDelegate {
     
     public func getCurrentColorId() -> Int {
         return currColorId
+    }
+}
+
+extension Screen: CAAnimationDelegate {
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        layer.mask = nil
     }
 }
