@@ -11,7 +11,6 @@ open class Screen: UIView {
     
     let reuseId = "AppCell"
     let hexArray = [0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xfcff00, 0xd2ff00, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xffffff]
-    var currColorId = 0
     
     var appView: UIView?
     
@@ -21,7 +20,7 @@ open class Screen: UIView {
         self.multiplier = multiplier
         self.player = player
         
-        // Add background phot
+        // Add background photo
         imgView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         let bgImg = UIImage(named: "wwbg.png")
         imgView.image = bgImg
@@ -55,7 +54,7 @@ open class Screen: UIView {
         let carrierTextView = UITextView(frame: CGRect(x: 0, y: -5, width: bounds.width, height: 50))
         carrierTextView.font = UIFont.systemFont(ofSize: 10)
         carrierTextView.backgroundColor = UIColor.clear
-        carrierTextView.text = "Verizon \t\t\t  \(timeString)"
+        carrierTextView.text = "iCarrier \t\t\t  \(timeString)"
         carrierTextView.textColor = UIColor.white
         carrierTextView.isUserInteractionEnabled = false
         addSubview(carrierTextView)
@@ -68,6 +67,7 @@ open class Screen: UIView {
     }
     
     func closeApp() {
+        // Only enable animation if an app is open
         if appView != nil {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromBottom, animations: {
                 self.appView?.removeFromSuperview()
@@ -77,39 +77,55 @@ open class Screen: UIView {
         }
     }
     
+    // Create startup sequence that somewhat mimics Twitter's startup (with twists ;) )
     func initStartupSequence() {
         let width: CGFloat = 0.6 * 400/3
         let height: CGFloat = 0.6 * 100
         
+        // Add mask to display Apple logo
         layer.mask = CALayer()
         layer.mask?.contents = UIImage(named: "apl.png")?.cgImage
         layer.mask?.bounds = CGRect(x: 0, y: 0, width: width, height: height)
         layer.mask?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         layer.mask?.position = CGPoint(x: frame.size.width/2, y: frame.size.height/2)
         
+        // Add a delay to startup animation
         _ = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(startupAnimation), userInfo: nil, repeats: false)
     }
     
     func startupAnimation() {
+        // Sets aspect ratio of Apple logo
         let width: CGFloat = 0.6 * 400/3
         let height: CGFloat = 0.6 * 100
         
         let keyFrameAnimation = CAKeyframeAnimation(keyPath: "bounds")
+        // Need to set delegate to perform tasks after completion
         keyFrameAnimation.delegate = self
         keyFrameAnimation.duration = 2
         keyFrameAnimation.beginTime = CACurrentMediaTime() + 1
+
+        // Sets location of mask
         let initalBounds = NSValue(cgRect: (layer.mask?.bounds)!)
         let secondBounds = NSValue(cgRect: CGRect(x: 0, y: 0, width: 0.9 * width, height: 0.9 * height))
         let finalBounds = NSValue(cgRect: CGRect(x: 0, y: 0, width: 30 * width, height: 30 * height))
+        
         keyFrameAnimation.values = [initalBounds, secondBounds, finalBounds]
         keyFrameAnimation.keyTimes = [0, 0.3, 1]
         keyFrameAnimation.timingFunctions = [CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut), CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)]
         layer.mask?.add(keyFrameAnimation, forKey: "bounds")
         
+        // Load and play startup sound
         let itemLocation = Bundle.main.url(forResource: "MacStartUp", withExtension: "mp3")!
         let item = AVPlayerItem(url: itemLocation)
         player.insert(item, after: nil)
         player.play()
+    }
+    
+    func changeColor(colorId: Int) {
+        if let phone = superview as? Phone {
+            let color = UIColor(netHex: hexArray[colorId])
+            phone.updateColor(color: color)
+        }
     }
 }
 
@@ -151,39 +167,11 @@ extension Screen: UICollectionViewDelegate, UICollectionViewDataSource {
             appView = ResumeView(frame: bounds)
         }
         
-        
-//        appView = ResumeView(frame: bounds)
-//        if let appView = appView as? SettingsView {
-//            appView.delegate = self
-//        }
-//        
-//        if let appView = appView as? MusicPlayer {
-//            let searchController = UISearchController(searchResultsController: nil)
-//            searchController.searchResultsUpdater = appView
-//            searchController.dimsBackgroundDuringPresentation = false
-//            appView.songTable.tableHeaderView = searchController.searchBar
-//        }
-        
         if let appView = appView {
             UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromTop, animations: {
                 self.addSubview(appView)
             }, completion: nil)
         }
-    }
-}
-
-extension Screen: SettingsViewDelegate {
-    public func changeColor(colorId: Int) {
-        if let phone = superview as? Phone {
-            let color = UIColor(netHex: hexArray[colorId])
-            phone.updateColor(color: color)
-            // Need to store new ID so slider can adjust when reloaded
-            currColorId = colorId
-        }
-    }
-    
-    public func getCurrentColorId() -> Int {
-        return currColorId
     }
 }
 

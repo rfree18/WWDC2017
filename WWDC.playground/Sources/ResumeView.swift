@@ -6,27 +6,25 @@ open class ResumeView: UIView {
     var timer: Timer!
     var imageView: UIImageView!
     
-    let textArray = ["Hello, world!", "My name is Ross", "I'm in my second of three years at NYU, where I study Computer Science", "While here I've built some pretty cool stuff", "I'm also on the executive board of a really cool club", "And I've worked at some pretty amazing companies", "I'd love to learn more and meet amazing people at WWDC 😊"]
-    let imageArray = ["", "", "nyu.jpg", "nyudining.jpg", "tnyu.png", "ww.jpg", ""]
+    let textArray = ["Hello, world!", "My name is Ross", "I'm in my second of three years at NYU, where I study Computer Science", "While here I've built some pretty cool things", "I'm also on the executive board of an amazing organization", "And I've worked at some great companies", "I'd love to learn more and meet amazing people at WWDC 😊"]
+    let imageArray = ["", "pro_pic.jpg", "nyu.jpg", "nyudining.jpg", "tnyu.png", "ww.jpg", "hackny.jpg"]
     var currCount = 0
-    let animateDuration = 5.0
+    let animateDuration = 4.5
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-//        backgroundColor = UIColor(red: 0.431, green: 0.231, blue: 0.604, alpha: 1.0)
         backgroundColor = UIColor(red: 0.286, green: 0.710, blue: 0.894, alpha: 1.00)
         
         timer = Timer.scheduledTimer(timeInterval: animateDuration + 1.0, target: self, selector: #selector(animate), userInfo: nil, repeats: true)
         
-        imageView = UIImageView(frame: CGRect(x: frame.width/2 - 90, y: 190, width: 180, height: 180))
+        // Image view should adjust to image aspect ratio
+        imageView = UIImageView(frame: CGRect(x: 0, y: 190, width: frame.width, height: 300))
         imageView.contentMode = .scaleAspectFit
-//        imageView.image = UIImage(named: "nyudining.jpg")
         
-        let textFrame = CGRect(x: 0, y: 50, width: frame.width, height: 100)
+        let textFrame = CGRect(x: 0, y: 90, width: frame.width, height: 100)
         mainTextView = UITextView(frame: textFrame)
         mainTextView.backgroundColor = UIColor.clear
         mainTextView.font = UIFont.systemFont(ofSize: 20, weight: UIFontWeightBold)
-//        mainTextView.text = "Hello, world!"
         mainTextView.textAlignment = .center
        
         addSubview(imageView)
@@ -43,15 +41,17 @@ open class ResumeView: UIView {
         mainTextView.pushTransition(animateDuration)
         mainTextView.text = textArray[currCount]
         
+        // Just in case there are fewer images than strings
         if(currCount < imageArray.count) {
             let image = UIImage(named: imageArray[currCount])
-            imageView.pushTransition(animateDuration)
+            imageView.imageTransition(animateDuration)
             imageView.image = image
         }
         
         currCount += 1
         
         if(currCount >= textArray.count) {
+            // End timer once we complete every string
             timer.invalidate()
         }
     }

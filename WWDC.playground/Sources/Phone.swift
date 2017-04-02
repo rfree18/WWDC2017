@@ -14,6 +14,8 @@ open class Phone: UIView {
     public init(multiplier: CGFloat = 5, player: AVQueuePlayer) {
         super.init(frame: CGRect(x: 0, y: 0, width: multiplier * 67.1, height: multiplier * 138.3))
         backgroundColor = UIColor.black
+        
+        // Create rounded corners
         layer.cornerRadius = CGFloat(8 * multiplier)
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 0.5
@@ -29,6 +31,7 @@ open class Phone: UIView {
         homeButton.addTarget(self, action: #selector(homeButtonPressed), for: .touchUpInside)
         addSubview(homeButton)
         
+        // Blank screen should be black
         let screenBackground = UIView(frame: CGRect(x: multiplier * 4.31, y: multiplier * 17.12, width: multiplier * 58.5, height: multiplier*104.05))
         screenBackground.backgroundColor = UIColor.black
         addSubview(screenBackground)
@@ -48,8 +51,11 @@ open class Phone: UIView {
     }
     
     func updateColor(color: UIColor) {
-        backgroundColor = color
-        homeButton.backgroundColor = color
+        // Change color of phone
+        UIView.animate(withDuration: 0.5) {
+            self.backgroundColor = color
+            self.homeButton.backgroundColor = color
+        }
     }
     
     func homeButtonPressed() {
